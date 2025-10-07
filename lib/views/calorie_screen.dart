@@ -1,6 +1,9 @@
+import 'package:fitelo_app_assignment/utils/app_text_style.dart';
+import 'package:fitelo_app_assignment/utils/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/calorie_controller.dart';
+import '../utils/common_widgets.dart';
 import '../widgets/ring_chart.dart';
 import '../widgets/macro_card.dart';
 
@@ -9,68 +12,110 @@ class CalorieScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CalorieController controller = Get.put(CalorieController());
-    controller.calculateCalories();
+    final controller = Get.put(CalorieController());
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Daily Calorie Target"),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            onPressed: () => _showInfoSheet(context),
-          ),
-        ],
-      ),
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Obx(() => Column(
-            children: [
-              const SizedBox(height: 20),
-              RingChart(value: controller.dailyCalories.value),
-              const SizedBox(height: 30),
+        child: Obx(
+          () => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                40.height,
+                // Progress dots
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [dot(false), dot(false), dot(true)],
+                ),
+                30.height,
+                Text(
+                  "Awesome 😎! Here's Your Calorie Intake - with your “${controller.goalKg.value} kg in ${controller.months.value} months” goal, this personalized daily calorie guide keeps you on track!",
+                  textAlign: TextAlign.center,
+                  style: AppTextStyle.h4BlackColor,
+                ),
+                const SizedBox(height: 30),
 
-              // Maintenance input
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Maintenance: ",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(
-                    width: 80,
-                    child: TextField(
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        contentPadding: EdgeInsets.all(8),
-                      ),
-                      onChanged: (val) {
-                        final parsed = double.tryParse(val) ?? 2200;
-                        controller.updateMaintenance(parsed);
-                      },
+                RingChart(
+                  // value: controller.dailyCalories.value,
+                  carbs: controller.carbs.value,
+                  protein: controller.protein.value,
+                  fat: controller.fat.value,
+                  calories: controller.dailyCalories.value,
+                ),
+
+                const SizedBox(height: 30),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    MacroCard(
+                      label: "Carbs",
+                      grams: controller.carbs.value,
+                      color: const Color(0xFFB0E0E6),
                     ),
-                  ),
-                  const Text(" kcal"),
-                ],
-              ),
+                    MacroCard(
+                      label: "Protein",
+                      grams: controller.protein.value,
+                      color: const Color(0xFFCCE5FF),
+                    ),
+                    MacroCard(
+                      label: "Fat",
+                      grams: controller.fat.value,
+                      color: const Color(0xFFFFE5B4),
+                    ),
+                  ],
+                ),
 
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  MacroCard(label: "Carbs", grams: controller.carbs.value, color: Colors.blue),
-                  MacroCard(label: "Protein", grams: controller.protein.value, color: Colors.green),
-                  MacroCard(label: "Fat", grams: controller.fat.value, color: Colors.pink),
-                ],
-              ),
-            ],
-          )),
+                const Spacer(),
+
+                // Continue Button
+                Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.orange),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: Colors.orange,
+                        ),
+                        onPressed: () => Get.back(),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: SizedBox(
+                        height: 50,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFF58B56),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: () {},
+                          child: const Text(
+                            "Continue",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 25),
+              ],
+            ),
+          ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.grey.shade100,
+        onPressed: () => _showInfoSheet(context),
+        child: const Icon(Icons.info_outline, color: Colors.black87),
       ),
     );
   }
@@ -82,28 +127,27 @@ class CalorieScreen extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text(
-                "How Calories Are Calculated",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 12),
-              Text(
-                "1. Energy per kg fat = 7700 kcal\n"
-                    "2. Total deficit = goal × 7700\n"
-                    "3. Days = months × 30.4\n"
-                    "4. Daily deficit = total_deficit / days\n"
-                    "5. Daily calories = maintenance - daily_deficit (min 1200)\n"
-                    "6. Macros: 45% carbs, 30% protein, 25% fat\n"
-                    "7. Grams: carbs/protein ÷4, fat ÷9",
-                style: TextStyle(fontSize: 16, color: Colors.black87),
-              ),
-            ],
-          ),
+        padding: const EdgeInsets.all(18.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Text(
+              "How Calories Are Calculated",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 12),
+            Text(
+              "1. Energy per kg fat = 7700 kcal\n"
+              "2. Total deficit = goal × 7700\n"
+              "3. Days = months × 30.4\n"
+              "4. Daily deficit = total_deficit / days\n"
+              "5. Daily calories = maintenance - daily_deficit (min 1200)\n"
+              "6. Macros: 45% carbs, 30% protein, 25% fat\n"
+              "7. Grams: carbs/protein ÷4, fat ÷9",
+              style: TextStyle(fontSize: 15, color: Colors.black87),
+            ),
+          ],
         ),
       ),
     );

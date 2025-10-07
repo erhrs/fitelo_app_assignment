@@ -14,18 +14,26 @@ class MacroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            Text(label, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: color)),
-            const SizedBox(height: 4),
-            Text("${grams.toStringAsFixed(0)} g", style: const TextStyle(fontSize: 18)),
-          ],
-        ),
+    return Container(
+      width: 95,
+      height: 85,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "${grams.toStringAsFixed(0)}g",
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 14, color: Colors.black54),
+          ),
+        ],
       ),
     );
   }

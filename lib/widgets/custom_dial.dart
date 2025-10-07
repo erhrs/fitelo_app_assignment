@@ -122,7 +122,7 @@ class _CustomDialState extends State<CustomDial>
     // Clip the painted dial so only the top portion is visible (like your reference)
     return ClipRect(
       child: SizedBox(
-        height: 260, // adjust to control how much of the dial is visible
+        height: 220, // adjust to control how much of the dial is visible
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
           onPanStart: (_) => _controller.stop(),
@@ -193,7 +193,12 @@ class _TopHalfDialPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height * 1.5);
+    // --- Center and radius ---
+    final centerMultiplier = size.width > 450
+        ? 4.45 // phone
+        : 1.75; // tablet
+
+    final center = Offset(size.width / 2, size.height * centerMultiplier);
     final radius = size.width * 0.9;
 
     // --- Light grey rings ---
