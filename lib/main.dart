@@ -1,10 +1,8 @@
+import 'package:fitelo_app_assignment/views/goal_flow_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'routes/app_routes.dart';
 import 'services/storage_service.dart';
-import 'views/goal_screen.dart';
-import 'views/pace_screen.dart';
-import 'views/calorie_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,11 +47,9 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
         primarySwatch: Colors.orange,
       ),
-      initialRoute: Routes.goal,
+      initialRoute: Routes.goalFlowScreen,
       getPages: [
-        GetPage(name: Routes.goal, page: () => const GoalScreen()),
-        GetPage(name: Routes.pace, page: () => const PaceScreen()),
-        GetPage(name: Routes.calorie, page: () => const CalorieScreen()),
+        GetPage(name: Routes.goalFlowScreen, page: () => const GoalFlowScreen()),
       ],
     );
   }

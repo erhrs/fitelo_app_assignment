@@ -66,7 +66,11 @@ class CalorieController extends GetxController {
     carbs.value = ((result * 0.45) / 4 / 5).round() * 5;
     protein.value = ((result * 0.30) / 4 / 5).round() * 5;
     fat.value = ((result * 0.25) / 9 / 5).round() * 5;
-    
-    print('Calculated Calories: $dailyCalories, carbs : ${carbs.value}, protein : ${protein.value}, fat : ${fat.value}');
   }
+
+  void updateMaintenance(double val) {
+    maintenanceCalories.value = val;
+    calculateCalories();
+  }
+
 }

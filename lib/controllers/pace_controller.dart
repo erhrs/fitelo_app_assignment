@@ -1,3 +1,4 @@
+import 'package:fitelo_app_assignment/utils/app_strings.dart';
 import 'package:get/get.dart';
 import '../services/storage_service.dart';
 
@@ -22,11 +23,12 @@ class PaceController extends GetxController {
   void updateMonths(double val) {
     months.value = val;
     StorageService.savePaceMonths(val);
-    if ((val - 6.0).abs() < 0.3) {
+
+    if ((val - 6.0).abs() <= 1.0) {
       selectedPace.value = PaceType.gentle;
-    } else if ((val - 3.0).abs() < 0.3) {
+    } else if ((val - 3.0).abs() <= 1.0) {
       selectedPace.value = PaceType.recommended;
-    } else if ((val - 1.5).abs() < 0.3) {
+    } else if ((val - 1.5).abs() <= 0.5) {
       selectedPace.value = PaceType.intense;
     } else {
       selectedPace.value = PaceType.custom;
@@ -36,13 +38,13 @@ class PaceController extends GetxController {
   String get paceCaption {
     switch (selectedPace.value) {
       case PaceType.gentle:
-        return "Gentle pace, easier to maintain long term.";
+        return AppStrings.gentleCaption;
       case PaceType.recommended:
-        return "Balanced pace for steady progress.";
+        return AppStrings.recommendedCaption;
       case PaceType.intense:
-        return "Intense pace — faster results, more discipline.";
+        return AppStrings.intenseCaption;
       default:
-        return "Custom pace selected.";
+        return AppStrings.customCaption;
     }
   }
 }

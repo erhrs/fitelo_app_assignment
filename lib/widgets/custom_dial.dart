@@ -1,3 +1,4 @@
+import 'package:fitelo_app_assignment/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:flutter/services.dart';
@@ -79,6 +80,26 @@ class _CustomDialState extends State<CustomDial>
     return r;
   }
 
+  // void _updateIndex({bool haptic = true}) {
+  //   final raw = (pi / 2 - _rotation) / _anglePerTick;
+  //   int idx = raw.round().clamp(0, _maxIndex);
+  //
+  //   // snap to nearest 0.5
+  //   double value = widget.minValue + idx * widget.step;
+  //   value = (value * 2).round() / 2; // rounds to nearest 0.5
+  //   idx = ((value - widget.minValue) / widget.step).round().clamp(0, _maxIndex);
+  //
+  //   if (idx != _currentIndex) {
+  //     _currentIndex = idx;
+  //     widget.onChanged(_valueForIndex(_currentIndex));
+  //     if (haptic && _lastHaptic != idx) {
+  //       HapticFeedback.lightImpact();
+  //       _lastHaptic = idx;
+  //     }
+  //     setState(() {}); // repaint
+  //   }
+  // }
+
   void _updateIndex({bool haptic = true}) {
     final raw = (pi / 2 - _rotation) / _anglePerTick;
     int idx = raw.round().clamp(0, _maxIndex);
@@ -90,14 +111,20 @@ class _CustomDialState extends State<CustomDial>
 
     if (idx != _currentIndex) {
       _currentIndex = idx;
-      widget.onChanged(_valueForIndex(_currentIndex));
+      final currentValue = _valueForIndex(_currentIndex);
+      widget.onChanged(currentValue);
+
       if (haptic && _lastHaptic != idx) {
-        HapticFeedback.lightImpact();
+        if (currentValue % 1 == 0) {
+          HapticFeedback.lightImpact();
+        }
         _lastHaptic = idx;
       }
+
       setState(() {}); // repaint
     }
   }
+
 
   void _animateToIndex(int target) {
     target = target.clamp(0, _maxIndex);
@@ -122,7 +149,7 @@ class _CustomDialState extends State<CustomDial>
     // Clip the painted dial so only the top portion is visible (like your reference)
     return ClipRect(
       child: SizedBox(
-        height: 220, // adjust to control how much of the dial is visible
+        height: 250, // adjust to control how much of the dial is visible
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
           onPanStart: (_) => _controller.stop(),
@@ -203,13 +230,13 @@ class _TopHalfDialPainter extends CustomPainter {
 
     // --- Light grey rings ---
     final ringPaint = Paint()
-      ..color = Colors.grey.shade100
+      ..color = AppColors.lightGrey
       ..style = PaintingStyle.stroke
       ..strokeWidth = 10;
 
     // --- Light grey ring thickness small ---
     final ringPaintSmallThickness = Paint()
-      ..color = Colors.grey.shade100
+      ..color = AppColors.lightGrey
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -219,7 +246,7 @@ class _TopHalfDialPainter extends CustomPainter {
 
     // --- Base arc background ---
     final arcPaint = Paint()
-      ..color = Colors.grey.shade200
+      ..color = AppColors.grey
       ..strokeWidth = 6
       ..style = PaintingStyle.stroke;
     final arcRect = Rect.fromCircle(center: center, radius: radius);
@@ -227,13 +254,13 @@ class _TopHalfDialPainter extends CustomPainter {
 
     // --- Tick mark paints ---
     final smallTickPaint = Paint()
-      ..color = Colors.grey.shade400
+      ..color = AppColors.grey.withValues(alpha: 0.35)
       ..strokeWidth = 1.2;
     final mediumTickPaint = Paint()
-      ..color = Colors.grey.shade500
+      ..color = AppColors.grey.withValues(alpha: 0.75)
       ..strokeWidth = 2;
     final bigTickPaint = Paint()
-      ..color = Colors.orange
+      ..color = AppColors.primaryColor
       ..strokeWidth = 2;
 
     // Increase total tick count for more spacing between labels

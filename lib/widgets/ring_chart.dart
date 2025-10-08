@@ -1,9 +1,6 @@
 import 'dart:math';
-
-import 'package:flutter/material.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
-
-import 'dart:math';
+import 'package:fitelo_app_assignment/utils/app_colors.dart';
+import 'package:fitelo_app_assignment/utils/app_icons.dart';
 import 'package:flutter/material.dart';
 
 class RingChart extends StatelessWidget {
@@ -22,41 +19,98 @@ class RingChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double total = carbs + protein + fat;
+    final total = carbs + protein + fat;
     final carbsRatio = carbs / total;
     final proteinRatio = protein / total;
     final fatRatio = fat / total;
 
-    return CustomPaint(
-      size: const Size(220, 220),
-      painter: _RingChartPainter(
-        carbsRatio: carbsRatio,
-        proteinRatio: proteinRatio,
-        fatRatio: fatRatio,
-      ),
-      child: SizedBox(
-        height: 220,
-        width: 220,
-        child: Center(
-          child: Column(
+    return SizedBox(
+      height: 220,
+      width: 220,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // RING CHART
+          CustomPaint(
+            size: const Size(220, 220),
+            painter: _RingChartPainter(
+              carbsRatio: carbsRatio,
+              proteinRatio: proteinRatio,
+              fatRatio: fatRatio,
+            ),
+          ),
+
+          // CENTER TEXT
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.local_fire_department, color: Colors.orange, size: 26),
-              const SizedBox(height: 4),
+              const Icon(Icons.local_fire_department,
+                  color: Colors.orange, size: 28),
+              const SizedBox(height: 6),
               Text(
                 calories.toStringAsFixed(0),
                 style: const TextStyle(
-                  fontSize: 34,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.orange,
+                  color: Colors.black,
                 ),
               ),
               const Text(
                 "Daily calories",
-                style: TextStyle(color: Colors.grey, fontSize: 13),
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
+
+          // ICONS ABOVE RING
+          _buildIcon(
+            angle: -pi / 2 + carbsRatio * pi,
+            color: Colors.teal,
+            imagePath: AppIcons.carbs,
+          ),
+          _buildIcon(
+            angle: -pi / 2 + (carbsRatio + proteinRatio / 2) * 2 * pi,
+            color: Colors.blueAccent,
+            imagePath: AppIcons.protein,
+          ),
+          _buildIcon(
+            angle: -pi / 2 + (carbsRatio + proteinRatio + fatRatio / 2) * 2 * pi,
+            color: Colors.orangeAccent,
+            imagePath: AppIcons.fat,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds a circular icon bubble (with white border) positioned above the ring
+  static Widget _buildIcon({
+    required double angle,
+    required Color color,
+    required String imagePath,
+  }) {
+    const double ringRadius = 88.0; // should match painter’s radius + offset
+    final offset =
+    Offset(cos(angle) * (ringRadius), sin(angle) * (ringRadius));
+
+    return Transform.translate(
+      offset: offset,
+      child: Container(
+        height: 35,
+        width: 35,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: color,
+          border: Border.all(color: Colors.white, width: 3),
+        ),
+        padding: const EdgeInsets.all(6),
+        child: Image.asset(
+          imagePath,
+          color: AppColors.white,
+          fit: BoxFit.contain,
         ),
       ),
     );
@@ -84,59 +138,28 @@ class _RingChartPainter extends CustomPainter {
     final paintBg = Paint()
       ..color = Colors.grey.shade200
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 20
+      ..strokeWidth = 10
       ..strokeCap = StrokeCap.round;
     canvas.drawCircle(center, radius, paintBg);
 
     double startAngle = -pi / 2;
 
-    // Helper: draw arc + icon
-    void drawArcWithIcon(Color color, double ratio, IconData icon) {
+    void drawArc(Color color, double ratio) {
       final sweep = 2 * pi * ratio;
       final paint = Paint()
         ..color = color
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 20
+        ..strokeWidth = 10
         ..strokeCap = StrokeCap.round;
-      final rect = Rect.fromCircle(center: center, radius: radius);
-      canvas.drawArc(rect, startAngle, sweep, false, paint);
-
-      // Draw icon at arc midpoint
-      final midAngle = startAngle + sweep / 2;
-      final iconOffsetRadius = radius + 18; // distance from center to icon
-      final iconX = center.dx + cos(midAngle) * iconOffsetRadius;
-      final iconY = center.dy + sin(midAngle) * iconOffsetRadius;
-
-      // Draw icon
-      final textPainter = TextPainter(
-        text: TextSpan(
-          text: String.fromCharCode(icon.codePoint),
-          style: TextStyle(
-            fontSize: 20,
-            fontFamily: icon.fontFamily,
-            color: color,
-            package: icon.fontPackage,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      );
-      textPainter.layout();
-      textPainter.paint(
-        canvas,
-        Offset(iconX - textPainter.width / 2, iconY - textPainter.height / 2),
-      );
-
+      final arcRect = Rect.fromCircle(center: center, radius: radius);
+      canvas.drawArc(arcRect, startAngle, sweep, false, paint);
       startAngle += sweep;
     }
 
-    // Carbs arc
-    drawArcWithIcon(Colors.teal, carbsRatio, Icons.bakery_dining_rounded);
-
-    // Protein arc
-    drawArcWithIcon(Colors.blueAccent, proteinRatio, Icons.fitness_center_rounded);
-
-    // Fat arc
-    drawArcWithIcon(Colors.orangeAccent, fatRatio, Icons.egg_rounded);
+    // arcs
+    drawArc(Colors.teal, carbsRatio);
+    drawArc(Colors.blueAccent, proteinRatio);
+    drawArc(Colors.orangeAccent, fatRatio);
   }
 
   @override
