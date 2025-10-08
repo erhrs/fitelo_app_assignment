@@ -1,4 +1,5 @@
 import 'package:fitelo_app_assignment/utils/app_colors.dart';
+import 'package:fitelo_app_assignment/utils/app_text_style.dart';
 import 'package:fitelo_app_assignment/utils/extensions.dart';
 import 'package:flutter/material.dart';
 
@@ -50,12 +51,12 @@ class MacroCard extends StatelessWidget {
             ),
             Text(
               "${grams.toStringAsFixed(0)}g",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: AppTextStyle.h4,
             ),
             4.height,
             Text(
               label,
-              style: const TextStyle(fontSize: 14, color: Colors.black54),
+              style: AppTextStyle.body2,
             ),
           ],
         ),

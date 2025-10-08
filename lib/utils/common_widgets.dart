@@ -1,6 +1,5 @@
 import 'package:fitelo_app_assignment/utils/extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'app_colors.dart';
 import 'app_text_style.dart';
 import 'app_strings.dart';
@@ -33,28 +32,6 @@ class StepDots extends StatelessWidget {
     );
   }
 }
-
-
-Widget dot() => Container(
-  margin: const EdgeInsets.symmetric(horizontal: 4),
-  width: 10,
-  height: 10,
-  decoration: BoxDecoration(
-    color: AppColors.grey.withValues(alpha: 0.45),
-    shape: BoxShape.circle,
-  ),
-);
-
-
-Widget activeDot() => Container(
-  margin: const EdgeInsets.symmetric(horizontal: 4),
-  width: 25,
-  height: 10,
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(10),
-    color: AppColors.primaryColor,
-  ),
-);
 
 Widget bottomButtons({required void Function() onContinuePressed, VoidCallback? onBackPressed,}) {
   return Row(

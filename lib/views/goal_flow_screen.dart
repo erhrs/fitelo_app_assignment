@@ -16,7 +16,6 @@ class GoalFlowScreen extends StatefulWidget {
 }
 
 class _GoalFlowScreenState extends State<GoalFlowScreen> {
-  final PageController _pageController = PageController();
   final RxInt currentPage = 0.obs;
   final int totalPages = 3;
 

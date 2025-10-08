@@ -80,26 +80,6 @@ class _CustomDialState extends State<CustomDial>
     return r;
   }
 
-  // void _updateIndex({bool haptic = true}) {
-  //   final raw = (pi / 2 - _rotation) / _anglePerTick;
-  //   int idx = raw.round().clamp(0, _maxIndex);
-  //
-  //   // snap to nearest 0.5
-  //   double value = widget.minValue + idx * widget.step;
-  //   value = (value * 2).round() / 2; // rounds to nearest 0.5
-  //   idx = ((value - widget.minValue) / widget.step).round().clamp(0, _maxIndex);
-  //
-  //   if (idx != _currentIndex) {
-  //     _currentIndex = idx;
-  //     widget.onChanged(_valueForIndex(_currentIndex));
-  //     if (haptic && _lastHaptic != idx) {
-  //       HapticFeedback.lightImpact();
-  //       _lastHaptic = idx;
-  //     }
-  //     setState(() {}); // repaint
-  //   }
-  // }
-
   void _updateIndex({bool haptic = true}) {
     final raw = (pi / 2 - _rotation) / _anglePerTick;
     int idx = raw.round().clamp(0, _maxIndex);
@@ -143,61 +123,62 @@ class _CustomDialState extends State<CustomDial>
           });
     _controller.forward(from: 0);
   }
-
   @override
   Widget build(BuildContext context) {
-    // Clip the painted dial so only the top portion is visible (like your reference)
-    return ClipRect(
-      child: SizedBox(
-        height: 250, // adjust to control how much of the dial is visible
-        child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onPanStart: (_) => _controller.stop(),
-          onPanUpdate: (d) {
-            // dragging right -> left should increase index:
-            // when dx < 0 => _rotation decreases (because we add dx*sensitivity), so (pi/2 - rotation) increases => index increases
-            setState(() {
-              _rotation = _clampRotation(
-                _rotation + d.delta.dx * _dragSensitivity,
-              );
-            });
-            _updateIndex();
-          },
-          onPanEnd: (d) {
-            // final vx = d.velocity.pixelsPerSecond.dx;
-            // final predicted = _clampRotation(_rotation + vx * _flingSensitivity);
-            // final idx = ((pi / 2 - predicted) / _anglePerTick).round();
-            // _animateToIndex(idx);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
 
-            final vx = d.velocity.pixelsPerSecond.dx;
-            final predicted = _clampRotation(
-              _rotation + vx * _flingSensitivity,
-            );
-            double value =
-                widget.minValue +
-                ((pi / 2 - predicted) / _anglePerTick * widget.step);
-            value = (value * 2).round() / 2; // snap to nearest 0.5
-            int idx = ((value - widget.minValue) / widget.step).round().clamp(
-              0,
-              _maxIndex,
-            );
-            _animateToIndex(idx);
-          },
-          child: CustomPaint(
-            size: const Size(double.infinity, 260),
-            painter: _TopHalfDialPainter(
-              rotation: _rotation,
-              tickCount: _tickCount,
-              anglePerTick: _anglePerTick,
-              currentIndex: _currentIndex,
-              step: widget.step,
-              minValue: widget.minValue,
+        final dialSize = width.clamp(200, 400); // minimum 200, max 400
+        final dialHeight = dialSize * 0.65; // proportional height
+
+        return ClipRect(
+          child: SizedBox(
+            height: dialHeight,
+            width: dialSize.toDouble(),
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onPanStart: (_) => _controller.stop(),
+              onPanUpdate: (d) {
+                setState(() {
+                  _rotation = _clampRotation(
+                    _rotation + d.delta.dx * _dragSensitivity,
+                  );
+                });
+                _updateIndex();
+              },
+              onPanEnd: (d) {
+                final vx = d.velocity.pixelsPerSecond.dx;
+                final predicted =
+                _clampRotation(_rotation + vx * _flingSensitivity);
+                double value = widget.minValue +
+                    ((pi / 2 - predicted) / _anglePerTick * widget.step);
+                value = (value * 2).round() / 2;
+                int idx =
+                ((value - widget.minValue) / widget.step).round().clamp(
+                  0,
+                  _maxIndex,
+                );
+                _animateToIndex(idx);
+              },
+              child: CustomPaint(
+                size: Size(dialSize.toDouble(), dialHeight),
+                painter: _TopHalfDialPainter(
+                  rotation: _rotation,
+                  tickCount: _tickCount,
+                  anglePerTick: _anglePerTick,
+                  currentIndex: _currentIndex,
+                  step: widget.step,
+                  minValue: widget.minValue,
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
+
 }
 
 /* ---- Painter ---- */
@@ -222,8 +203,8 @@ class _TopHalfDialPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // --- Center and radius ---
     final centerMultiplier = size.width > 450
-        ? 4.45 // phone
-        : 1.75; // tablet
+        ? 4.45
+        : 1.72;
 
     final center = Offset(size.width / 2, size.height * centerMultiplier);
     final radius = size.width * 0.9;

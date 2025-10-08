@@ -138,6 +138,8 @@ class PaceScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: AppTextStyle.body2.copyWith(
                       color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w700,
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
                 ),

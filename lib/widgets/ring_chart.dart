@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:fitelo_app_assignment/utils/app_colors.dart';
 import 'package:fitelo_app_assignment/utils/app_icons.dart';
+import 'package:fitelo_app_assignment/utils/app_strings.dart';
 import 'package:flutter/material.dart';
 
 class RingChart extends StatelessWidget {
@@ -56,7 +57,7 @@ class RingChart extends StatelessWidget {
                 ),
               ),
               const Text(
-                "Daily calories",
+                AppStrings.dailyCalories,
                 style: TextStyle(
                   color: Colors.grey,
                   fontWeight: FontWeight.w600,

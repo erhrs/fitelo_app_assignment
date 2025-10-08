@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../controllers/calorie_controller.dart';
 import '../utils/app_strings.dart';
-import '../utils/common_widgets.dart';
 import '../widgets/ring_chart.dart';
 import '../widgets/macro_card.dart';
 
@@ -43,7 +42,7 @@ class CalorieScreen extends StatelessWidget {
                         )
                         .replaceFirst(
                           "{months}",
-                          controller.months.value.toStringAsFixed(0),
+                          controller.months.value.toString(),
                         ),
                     textAlign: TextAlign.center,
                     style: AppTextStyle.h4BlackColor,
@@ -59,15 +58,15 @@ class CalorieScreen extends StatelessWidget {
                   15.height,
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
+                      horizontal: 15,
+                      vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade50,
+                      color: AppColors.white,
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withValues(alpha: 0.15),
+                          color: AppColors.grey,
                           blurRadius: 8,
                           offset: const Offset(0, 3),
                         ),
@@ -82,33 +81,49 @@ class CalorieScreen extends StatelessWidget {
                         ),
                         12.width,
                         Expanded(
-                          child: TextField(
-                            maxLength: 7,
-                            keyboardType: TextInputType.number,
-                            controller: maintenanceCtrl,
-                            style: AppTextStyle.h4BlackColor,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                            ],
-                            decoration: const InputDecoration(
-                              labelText: AppStrings.maintenanceCalories,
-                              labelStyle: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                AppStrings.maintenanceCalories,
+                                style: AppTextStyle.body2.copyWith(color: Colors.grey.shade700, fontWeight: FontWeight.w700),
                               ),
-                              border: InputBorder.none,
-                              isDense: true,
-                              contentPadding: EdgeInsets.zero,
-                              counterText: '',
-                            ),
-                            onChanged: (val) {
-                              if (val.isNotEmpty) {
-                                final parsed = double.tryParse(val);
-                                if (parsed != null) {
-                                  controller.updateMaintenance(parsed);
-                                }
-                              }
-                            },
+                              5.height,
+                              TextFormField(
+                                maxLength: 7,
+                                keyboardType: TextInputType.number,
+                                controller: maintenanceCtrl,
+                                style: AppTextStyle.h3BlackColor,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: AppStrings.enterCalories,
+                                  hintStyle: AppTextStyle.body2.copyWith(color: Colors.grey.shade400),
+                                  filled: true,
+                                  fillColor: Colors.grey.shade100,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: Colors.grey.shade300),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+                                  ),
+                                  isDense: true,
+                                  counterText: '',
+                                ),
+                                textInputAction: TextInputAction.done,
+                                onChanged: (val) {
+                                  if (val.isNotEmpty) {
+                                    final parsed = double.tryParse(val);
+                                    if (parsed != null) {
+                                      controller.updateMaintenance(parsed);
+                                    }
+                                  }
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -145,7 +160,8 @@ class CalorieScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.lightGrey,
+        shape: CircleBorder(side: BorderSide(color: AppColors.lightGrey)),
+        backgroundColor: AppColors.white,
         onPressed: () => _showInfoSheet(context),
         child: const Icon(Icons.info_outline, color: AppColors.primaryColor),
       ),

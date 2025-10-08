@@ -16,11 +16,11 @@ class AppStrings {
   static const months = "months";
   static const gentle = "Gentle";
   static const intense = "Intense";
-  static const gentleCaption = "Gentle pace, easier to maintain long term.";
-  static const recommendedCaption = "Balanced pace for steady progress.";
+  static const gentleCaption = '"Gentle pace, easier to maintain long term"';
+  static const recommendedCaption = '"Balanced pace for steady progress"';
   static const intenseCaption =
-      "Intense pace — faster results, more discipline.";
-  static const customCaption = "Custom pace selected.";
+      '"Intense pace — faster results, more discipline"';
+  static const customCaption = '"Custom pace selected"';
 
   // --- Calorie Screen ---
   static const calorieHeading =
@@ -39,4 +39,5 @@ class AppStrings {
       "6. Macros: 45% carbs, 30% protein, 25% fat\n"
       "7. Grams: carbs/protein ÷4, fat ÷9";
   static const maintenanceCalories = "Maintenance calories (kcal)";
+  static const enterCalories = "Enter calories";
 }

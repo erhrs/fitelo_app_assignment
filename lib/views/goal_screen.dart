@@ -40,11 +40,33 @@ class GoalScreen extends StatelessWidget {
                 final String weightString = goalKgValue % 1 == 0
                     ? goalKgValue.toInt().toString()
                     : goalKgValue.toStringAsFixed(1);
-                return Text(
-                  "${weightString}Kg",
-                  style: AppTextStyle.h1.copyWith(fontSize: 35),
+
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  transitionBuilder: (Widget child, Animation<double> animation) {
+                    // Combines fade + slight slide for smooth numeric transition
+                    return FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0.0, 0.2), // from slightly below
+                          end: Offset.zero,
+                        ).animate(CurvedAnimation(
+                          parent: animation,
+                          curve: Curves.easeInOutBack,
+                        )),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Text(
+                    "${weightString}Kg",
+                    key: ValueKey(weightString),
+                    style: AppTextStyle.h1.copyWith(fontSize: 35),
+                  ),
                 );
               }),
+
               10.height,
               // Arc Dial Picker
               CustomDial(
